@@ -42,8 +42,8 @@ jobs:
         account_id: ${{ secrets.AWS_ACCOUNT_ID }}
         repo: deia-karunyk
         region: eu-north-1
-        tags: latest,${{ github.sha }}
-        create_repo: true
+        tags: latest
+        create_repo: false
 
     - name: Post-build cleanup
       run: docker system prune -af
