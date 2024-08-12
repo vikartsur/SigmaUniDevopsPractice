@@ -13,7 +13,7 @@ data "aws_ami" "ami" {
   most_recent = true
   filter {
     name = "name"
-    # values = ["*ubuntu*24*-amd64-server-*"]
+    # values = ["* ubuntu*24*-amd64-server-*"]
     values = ["al2023-ami-2023*x86_64*"]
   }
   filter {
