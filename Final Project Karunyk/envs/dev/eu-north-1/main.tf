@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "eu-central-1"
+  region = "eu-north-1"
   default_tags {
     tags = {
       Application = "Sigma DevOps Course"
@@ -12,7 +12,7 @@ terraform {
   backend "s3" {
     bucket         = "global-sigma-devops-terraform-state"
     key            = "final/dev"
-    region         = "eu-central-1"
+    region         = "eu-north-1"
     dynamodb_table = "global-sigma-devops-terraform-lock"
 
   }
