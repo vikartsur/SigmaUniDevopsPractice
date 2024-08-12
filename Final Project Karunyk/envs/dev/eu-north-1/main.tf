@@ -11,7 +11,7 @@ terraform {
   required_version = ">= 1.7.0"
   backend "s3" {
     bucket         = "global-sigma-devops-terraform-state"
-    key            = "option2/dev/eu-central-1/security_groups/terraform.tfstate"
+    key            = "final/dev"
     region         = "eu-central-1"
     dynamodb_table = "global-sigma-devops-terraform-lock"
 
@@ -24,3 +24,4 @@ terraform {
     }
   }
 }
+###

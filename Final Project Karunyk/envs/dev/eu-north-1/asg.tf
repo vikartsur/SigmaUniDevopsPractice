@@ -4,9 +4,9 @@
 
 resource "aws_launch_template" "app" {
   name                   = "${var.env}-${var.app_name}"
-  image_id               = local.ami_id
+  image_id               = data.aws_ami.ami.id
   instance_type          = var.asg_ec2_instance_type
-  vpc_security_group_ids = [local.asg_sg_id]
+  vpc_security_group_ids = [aws_security_group.asg.id]
 
   user_data = base64encode(<<-EOF
   #!/bin/bash
@@ -41,7 +41,7 @@ resource "aws_launch_template" "app" {
   )
 
   iam_instance_profile {
-    arn = local.ec2_instance_profile_arn
+    arn = aws_iam_instance_profile.app.arn
   }
 
   block_device_mappings {
@@ -55,6 +55,10 @@ resource "aws_launch_template" "app" {
       volume_type           = "gp3"
     }
   }
+
+  depends_on = [
+    aws_ssm_parameter.db_url
+  ]
 
   lifecycle {
     create_before_destroy = true
@@ -70,8 +74,8 @@ resource "aws_autoscaling_group" "app" {
   health_check_grace_period = 300
   health_check_type         = "ELB"
 
-  vpc_zone_identifier = local.subnets
-  target_group_arns   = [local.target_group_arn]
+  vpc_zone_identifier = data.aws_subnets.default.ids
+  target_group_arns   = [aws_lb_target_group.app.arn]
 
   launch_template {
     id      = aws_launch_template.app.id

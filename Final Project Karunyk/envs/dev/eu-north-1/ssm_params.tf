@@ -6,7 +6,7 @@ resource "aws_ssm_parameter" "alb_dns" {
   name        = "/${var.env}/alb-${var.app_name}/dns"
   description = "Database name"
   type        = "SecureString"
-  value       = local.alb_dns_name
+  value       = aws_lb.app.dns_name
 
   tags = var.tags
 }
@@ -33,7 +33,7 @@ resource "aws_ssm_parameter" "db_url" {
   name        = "/${var.env}/db-${var.app_name}/url"
   description = "Database address"
   type        = "SecureString"
-  value       = local.rds_address
+  value       = aws_db_instance.db.address
 
   tags = var.tags
 }

@@ -6,8 +6,8 @@ resource "aws_lb" "app" {
   name               = "${var.env}-${var.app_name}-alb"
   internal           = false
   load_balancer_type = "application"
-  security_groups    = [local.asg_sg_id]
-  subnets            = local.subnets
+  security_groups    = [aws_security_group.alb.id]
+  subnets            = data.aws_subnets.default.ids
 
   tags = merge(var.tags,
     {
@@ -22,7 +22,7 @@ resource "aws_lb_target_group" "app" {
 
   port        = 80
   protocol    = "HTTP"
-  vpc_id      = local.vpc_id
+  vpc_id      = data.aws_vpc.default.id
   target_type = "instance"
 
   health_check {

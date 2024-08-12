@@ -1,0 +1,64 @@
+name: "Terraform CI/CD Pipeline - DEV"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - envs/dev/eu-north-1/**
+  pull_request:
+    branches:
+      - main
+    paths:
+      - envs/dev/eu-north-1/**
+env:
+  WORKING_DIR: envs/dev/eu-north-1/
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-north-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.7.3
+          terraform_wrapper: false
+
+      - name: Terraform Format
+        id: fmt
+        run: |
+          cd $WORKING_DIR 
+          terraform fmt .
+
+      - name: Terraform Init
+        id: init
+        run: |
+          cd $WORKING_DIR 
+          terraform init
+
+      - name: Terraform Validate
+        run: |
+          cd $WORKING_DIR 
+          terraform validate
+
+      - name: Terraform Plan
+        if: github.event_name == 'pull_request'
+        run: |
+          cd $WORKING_DIR 
+          terraform plan
+      
+      - name: Terragrunt Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          cd $WORKING_DIR 
+          terraform apply -auto-approve
